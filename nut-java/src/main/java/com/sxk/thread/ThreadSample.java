@@ -2,6 +2,9 @@ package com.sxk.thread;
 
 import com.sxk.entity.ConditionValidator;
 import com.sxk.util.StringUtils;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,11 +15,22 @@ import java.util.concurrent.TimeUnit;
 public class ThreadSample {
 
   public static void main(String[] args) throws Exception {
+    threadMx();
     //testThreadLocal();
     testThreadStack(0);
     testThreadStack(1);
     testThreadStack(2);
     testThreadStack(3);
+  }
+
+  public static void threadMx() {
+    ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    // 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息
+    ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+    // 遍历线程信息，仅打印线程 ID 和线程名称信息
+    for (ThreadInfo threadInfo : threadInfos) {
+      System.out.println("[" + threadInfo.getThreadId() + "] " + threadInfo.getThreadName());
+    }
   }
 
   private static void testThreadStack(int depth) {
@@ -54,6 +68,7 @@ public class ThreadSample {
         ThreadSample.testCondition("a");
       }
     }
+
   }
 
 

@@ -3,11 +3,11 @@ package com.sxk.single.instance;
 public class SingleDemo1 {
 
   /**
-   * volatile 有没有结果都一样
+   * volatile 有没有结果都一样,但是volatile可以禁止指令重排，所以避免重排，必须加上volatile
    */
 
-  private static SingleDemo1 instance = null;
-  //private volatile static SingleDemo1 instance = null;
+  //private static SingleDemo1 instance = null;
+  private volatile static SingleDemo1 instance = null;
 
   private SingleDemo1() {
     System.out.println("init:" + this.hashCode());
