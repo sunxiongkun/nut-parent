@@ -1,6 +1,7 @@
 package com.sxk.collection.list;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Stack;
@@ -11,6 +12,10 @@ import java.util.Stack;
 public class ArrayListAnalytics {
 
   public static void main(String[] args) {
+    final List<String> list = Arrays.asList("a", "b", "c");
+    list.add("e");
+    System.out.println(list.size());
+
     addAll();
     ensureCapacity(false);
     indexOutOfBoundsException();

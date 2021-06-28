@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 
 /**
  * 优先级队列
+ * @author sxk
  */
 public class PriorityQueue01 {
 
