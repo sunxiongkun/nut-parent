@@ -12,8 +12,8 @@ public class ObjectNotify {
   public static void main(String[] args) throws Exception {
     //changePrint();
     //changePrintWithLock();
-    //testNotify();
-    changeRunSemaphore();
+    testNotify();
+    //changeRunSemaphore();
     //testLockCondition();
 
   }
@@ -129,8 +129,8 @@ public class ObjectNotify {
         lock.lock();
         try {
           System.out.println(chars[i]);
-          c2.await();
           c1.signal();
+          c2.await();
         } catch (Exception e) {
           e.printStackTrace();
         } finally {
