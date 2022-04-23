@@ -3,7 +3,7 @@ package com.sxk.single.instance;
 public class SingleDemo1 {
 
   /**
-   * volatile 有没有结果都一样,但是volatile可以禁止指令重排，所以避免重排，必须加上volatile
+   * volatile 有没有结果都一样,但是volatile可以禁止指令重排， 指令重拍可能造成半对象问题 所以避免重排，必须加上volatile
    */
 
   //private static SingleDemo1 instance = null;
@@ -28,6 +28,4 @@ public class SingleDemo1 {
     }
     return instance;
   }
-
-
 }

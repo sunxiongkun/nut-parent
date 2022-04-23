@@ -2,30 +2,38 @@ package com.sxk.thread;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * java8 CompletableFuture
  */
+@Slf4j
 public class CompletableFutureSample {
 
   public static void main(String[] args) throws Exception {
     //featureGet();
     //runAsync();
     //supplyAsync();
-    testThenCombine();
+    //testThenCombine();
+    testTimeout();
   }
 
 
   /**
-   * 默认会从ForkJoinPool.commonPool()中获取线程执行
-   * ,但是你也可以创建一个线程池并传给runAsync() 和supplyAsync()方法来让他们从线程池中获取一个线程执行它们的任务。
-   * static CompletableFuture<Void>  runAsync(Runnable runnable)
-   * static CompletableFuture<Void>  runAsync(Runnable runnable, Executor executor)
-   * static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier)
-   * static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier, Executor executor)
+   * 默认会从ForkJoinPool.commonPool()中获取线程执行 ,但是你也可以创建一个线程池并传给runAsync()
+   * 和supplyAsync()方法来让他们从线程池中获取一个线程执行它们的任务。 static CompletableFuture<Void>  runAsync(Runnable
+   * runnable) static CompletableFuture<Void>  runAsync(Runnable runnable, Executor executor)
+   * static
+   * <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) static <U> CompletableFuture<U>
+   * supplyAsync(Supplier<U> supplier, Executor executor)
    */
 
   public static void featureGet() throws Exception {
@@ -52,8 +60,7 @@ public class CompletableFutureSample {
   }
 
   /**
-   * thenApply(), thenAccept() 和thenRun()方法附上一个回调给CompletableFuture
-   * 使用 thenCompose() 组合两个独立的future
+   * thenApply(), thenAccept() 和thenRun()方法附上一个回调给CompletableFuture 使用 thenCompose() 组合两个独立的future
    */
 
   public static void supplyAsync() throws Exception {
@@ -201,6 +208,35 @@ public class CompletableFutureSample {
     });
 
     maturityFuture.thenAccept(result -> System.out.println(result));
+  }
+
+
+  private static void testTimeout() {
+    ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(100);
+    ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS,
+        queue, new AbortPolicy());
+
+    for (int i = 0; i < 50; i++) {
+      CompletableFuture<String> future = CompletableFuture
+          .supplyAsync(() -> {
+            try {
+              TimeUnit.MILLISECONDS.sleep(ThreadLocalRandom.current().nextInt(2000));
+              return "success";
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+              return "error";
+            }
+          }, poolExecutor);
+      log.info("submit task start...");
+      try {
+        future.get(1000, TimeUnit.MILLISECONDS);
+        log.info("submit task end...");
+      } catch (TimeoutException e1) {
+        log.error("submit task timeout:", e1);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 }

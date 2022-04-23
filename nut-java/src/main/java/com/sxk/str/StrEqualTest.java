@@ -1,5 +1,8 @@
 package com.sxk.str;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StrEqualTest {
 
   public static void main(String[] args) {
@@ -14,6 +17,9 @@ public class StrEqualTest {
     System.out.println(s1 == s6);
     System.out.println(s1.intern());
     System.out.println(s5.intern());
+
+    log.info("aa:{}", "${jndi:'open /Applications/Typora.app'}");
+
 
   }
 
